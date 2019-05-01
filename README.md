@@ -20,6 +20,7 @@ Configuration example nginx virtual host
         # redis host:port
         # set $privacyidea_redis_host "127.0.0.1";
         # set $privacyidea_redis_post 6379;
+        # set $privacyidea_redis_auth "CHANGE ME";
 
         # how long are accepted authentication allowed to be cached
         # if expired, the user has to reauthenticate

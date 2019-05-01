@@ -29,7 +29,7 @@ end
 -- Connect to redis storage
 -- ------------------------
 
-function redis_connect(host, port)
+function redis_connect(host, port, auth)
     local redis  = require "nginx/redis"
     local red = redis:new()
     red:set_timeout(1000) -- 1 sec
@@ -37,6 +37,13 @@ function redis_connect(host, port)
     if not ok then
         ngx.log(ngx.ERR, "failed to connect tor redis: ", err)
         ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE)
+    end
+    if auth then
+      local res, autherr = red:auth(auth)
+      if not res then
+        ngx.log(ngx.ERR,"failed to auth to redis: ", autherr)
+        ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE)
+      end
     end
     return red
 end
@@ -138,8 +145,9 @@ function authenticate()
     -- open redis connection
     local redis_host = ngx.var.privacyidea_redis_host or '127.0.0.1'
     local redis_port = ngx.var.privacyidea_redis_port or 6379
+    local redis_auth = ngx.var.privacyidea.redis_auth or nil
     local ttl = ngx.var.privacyidea_ttl or 900
-    local red = redis_connect(redis_host, redis_port)
+    local red = redis_connect(redis_host, redis_port, redis_auth)
 
     -- lookup key and hash
     local key = generate_key(username)
