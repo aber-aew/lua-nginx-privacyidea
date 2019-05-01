@@ -30,7 +30,7 @@ end
 -- ------------------------
 
 function redis_connect(host, port, auth)
-    local redis  = require "nginx/redis"
+    local redis  = require "redis"
     local red = redis:new()
     red:set_timeout(1000) -- 1 sec
     local ok, err = red:connect(host, port)
@@ -145,7 +145,7 @@ function authenticate()
     -- open redis connection
     local redis_host = ngx.var.privacyidea_redis_host or '127.0.0.1'
     local redis_port = ngx.var.privacyidea_redis_port or 6379
-    local redis_auth = ngx.var.privacyidea.redis_auth or nil
+    local redis_auth = ngx.var.privacyidea_redis_auth or nil
     local ttl = ngx.var.privacyidea_ttl or 900
     local red = redis_connect(redis_host, redis_port, redis_auth)
 
